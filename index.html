@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MyCampus Café - Staff Portal</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #5a3e2b; }
+        h2 { color: #7a5c3a; border-bottom: 1px solid #ddd; padding-bottom: 6px; }
+        input, select { padding: 6px; margin: 4px 0; width: 220px; }
+        button { padding: 7px 16px; background: #5a3e2b; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #7a5c3a; }
+        button.danger { background: #c0392b; }
+        button.danger:hover { background: #e74c3c; }
+        table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+        th { background: #f5ede4; }
+        .menu-card { background: #fdf6f0; border: 1px solid #ddd; border-radius: 6px; padding: 12px 16px; margin-bottom: 10px; }
+        .menu-card h3 { margin: 0 0 6px 0; color: #5a3e2b; }
+        .message { color: #2c7a2c; margin: 8px 0; font-weight: bold; }
+        .message.error { color: #c0392b; }
+        section { background: #fdf6f0; padding: 16px 20px; border-radius: 6px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>MyCampus Café</h1>
+
+        <!-- LOGIN SECTION: v-if="!isLoggedIn" hides this once staff logs in -->
+        <section v-if="!isLoggedIn">
+            <h2>Staff Login</h2>
+            <!-- @submit.prevent: runs loginStaff() and stops the page from reloading -->
+            <form @submit.prevent="loginStaff">
+                <input v-model="login.username" placeholder="Username" required><br><br>
+                <input v-model="login.password" type="password" placeholder="Password" required><br><br>
+                <button type="submit">Login</button>
+            </form>
+            <p class="message error" v-if="message">{{ message }}</p>
+        </section>
+
+        <!-- ADMIN PANEL: v-if="isLoggedIn" only shows this after successful login -->
+        <section v-if="isLoggedIn">
+            <h2>Admin Panel <button @click="logout" style="float:right">Logout</button></h2>
+            <p class="message" v-if="message">{{ message }}</p>
+
+            <h3>Add New Menu Item</h3>
+            <input v-model="newMenu.menu_name" placeholder="Menu Name" required><br><br>
+            <input v-model="newMenu.category" placeholder="Category" required><br><br>
+            <input v-model="newMenu.price" type="number" step="0.01" placeholder="Price (RM)" required><br><br>
+            <select v-model="newMenu.availability">
+                <option>Available</option>
+                <option>Unavailable</option>
+            </select><br><br>
+            <button @click="addMenu">Add Menu Item</button>
+        </section>
+
+        <!-- MENU LIST (CODE 7): always visible — public route, no login required -->
+        <h2>Menu List</h2>
+        <p v-if="menuItems.length === 0">No menu items found.</p>
+
+        <!-- v-for loops over menuItems array; :key helps Vue track each card -->
+        <div v-for="item in menuItems" :key="item.menu_id" class="menu-card">
+
+            <!-- VIEW MODE: shown when this item is NOT being edited -->
+            <div v-if="!editingItem || editingItem.menu_id !== item.menu_id">
+                <h3>{{ item.menu_name }}</h3>
+                <p>Category: {{ item.category }}</p>
+                <p>Price: RM {{ item.price }}</p>
+                <p>Status: {{ item.availability }}</p>
+                <!-- Edit and Delete buttons only visible when logged in -->
+                <button v-if="isLoggedIn" @click="startEdit(item)">Edit</button>
+                <button v-if="isLoggedIn" class="danger" @click="deleteMenu(item.menu_id)">Delete</button>
+            </div>
+
+            <!-- EDIT MODE: shown when staff clicks Edit on this specific card -->
+            <!-- editingItem holds a copy of the item, so v-model changes don't affect the list -->
+            <div v-else>
+                <input v-model="editingItem.menu_name" placeholder="Menu Name"><br><br>
+                <input v-model="editingItem.category" placeholder="Category"><br><br>
+                <input v-model="editingItem.price" type="number" step="0.01" placeholder="Price"><br><br>
+                <select v-model="editingItem.availability">
+                    <option>Available</option>
+                    <option>Unavailable</option>
+                </select><br><br>
+                <!-- updateMenu sends PUT /api/menu/{id} with the edited values -->
+                <button @click="updateMenu(editingItem)">Save</button>
+                <!-- cancelEdit sets editingItem back to null, hiding the form -->
+                <button @click="cancelEdit">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Load order matters: Vue must be first, then api.js, then app.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
