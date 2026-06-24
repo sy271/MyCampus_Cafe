@@ -1,0 +1,77 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1 { color: #5a3e2b; }
+
+h2 {
+    color: #7a5c3a;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 6px;
+}
+
+input, select {
+    padding: 6px;
+    margin: 4px 0;
+    width: 220px;
+}
+
+button {
+    padding: 7px 16px;
+    background: #5a3e2b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover { background: #7a5c3a; }
+
+button.danger { background: #c0392b; }
+
+button.danger:hover { background: #e74c3c; }
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 12px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+th { background: #f5ede4; }
+
+.menu-card {
+    background: #fdf6f0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+}
+
+.menu-card h3 {
+    margin: 0 0 6px 0;
+    color: #5a3e2b;
+}
+
+.message {
+    color: #2c7a2c;
+    margin: 8px 0;
+    font-weight: bold;
+}
+
+.message.error { color: #c0392b; }
+
+section {
+    background: #fdf6f0;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
